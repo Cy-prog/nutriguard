@@ -23,7 +23,7 @@ This guide details step-by-step instructions for deploying the **NutriGuard** pl
 
 ### Step 2: Deploy Backend as a Render Web Service
 1. In the Render Dashboard, click **New +** and select **Web Service**.
-2. Connect your Git repository (`https://github.com/dubekriish09/nutriguard`).
+2. Connect your Git repository (`https://github.com/Cy-prog/nutriguard`).
 3. Fill in the service configuration:
    - **Name**: `nutriguard-api`
    - **Region**: Same region as the database
