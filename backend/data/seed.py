@@ -13,6 +13,7 @@ from models.food import Food, Nutrient, Allergen, FoodNutrition
 from models.medication import Medication, DrugFoodInteraction, DrugNutrientDepletion
 from models.condition import Condition, ConditionNutritionRule
 from models.evidence import DataSource, Evidence, RuleEvidence
+from models.meal import Meal, Ingredient, MealIngredient, MealAllergen
 
 def seed_users(db):
     users = [
@@ -172,7 +173,106 @@ def seed_conditions(db, conditions_data):
             )
             db.add(cnr)
 
+def seed_meals(db, meals_data):
+    """Seed meals, ingredients, and their relationships from meals JSON data."""
+    ingredient_cache = {}
+    
+    for item in meals_data:
+        existing = db.query(Meal).filter_by(name=item['name']).first()
+        if existing:
+            continue
+        
+        meal = Meal(
+            name=item['name'],
+            local_name=item.get('local_name'),
+            description=item.get('description'),
+            meal_type=item['meal_type'],
+            cuisine_region=item.get('cuisine_region'),
+            food_type=item.get('food_type'),
+            is_vegetarian=item.get('is_vegetarian', True),
+            is_vegan=item.get('is_vegan', False),
+            is_jain_friendly=item.get('is_jain_friendly', False),
+            is_egg_based=item.get('is_egg_based', False),
+            preparation_time_minutes=item.get('preparation_time_minutes'),
+            difficulty=item.get('difficulty'),
+            serving_size_g=item.get('serving_size_g'),
+            serving_description=item.get('serving_description'),
+            calories=item.get('calories'),
+            protein_g=item.get('protein_g'),
+            carbohydrates_g=item.get('carbohydrates_g'),
+            fat_g=item.get('fat_g'),
+            fiber_g=item.get('fiber_g'),
+            sugar_g=item.get('sugar_g'),
+            sodium_mg=item.get('sodium_mg'),
+            calcium_mg=item.get('calcium_mg'),
+            iron_mg=item.get('iron_mg'),
+            potassium_mg=item.get('potassium_mg'),
+            vitamin_a_mcg=item.get('vitamin_a_mcg'),
+            vitamin_c_mg=item.get('vitamin_c_mg'),
+            vitamin_d_mcg=item.get('vitamin_d_mcg'),
+            vitamin_b12_mcg=item.get('vitamin_b12_mcg'),
+            folate_mcg=item.get('folate_mcg'),
+            recipe_text=item.get('recipe_text'),
+            preparation_steps=item.get('preparation_steps', []),
+            image_url=item.get('image_url'),
+            video_url=item.get('video_url'),
+            source_name=item.get('source_name'),
+            source_type=item.get('source_type'),
+            tags=item.get('tags', []),
+            primary_protein_source=item.get('primary_protein_source'),
+            primary_grain=item.get('primary_grain'),
+            cooking_method=item.get('cooking_method'),
+            spice_level=item.get('spice_level')
+        )
+        db.add(meal)
+        db.flush()
+        
+        # Seed ingredients and link to meal
+        for ing_data in item.get('ingredients', []):
+            ing_name = ing_data['name']
+            if ing_name not in ingredient_cache:
+                ingredient = db.query(Ingredient).filter_by(name=ing_name).first()
+                if not ingredient:
+                    ingredient = Ingredient(
+                        name=ing_name,
+                        local_name=ing_data.get('local_name'),
+                        category=ing_data.get('category'),
+                        is_vegetarian=item.get('is_vegetarian', True),
+                        is_vegan=item.get('is_vegan', False),
+                        is_jain_friendly=item.get('is_jain_friendly', False)
+                    )
+                    db.add(ingredient)
+                    db.flush()
+                ingredient_cache[ing_name] = ingredient.ingredient_id
+            
+            mi = MealIngredient(
+                meal_id=meal.meal_id,
+                ingredient_id=ingredient_cache[ing_name],
+                quantity=ing_data.get('quantity'),
+                unit=ing_data.get('unit'),
+                is_optional=ing_data.get('is_optional', False),
+                notes=ing_data.get('notes')
+            )
+            db.add(mi)
+        
+        # Seed allergens and link to meal
+        for alg_name in item.get('allergens', []):
+            alg = db.query(Allergen).filter_by(name=alg_name).first()
+            if not alg:
+                alg = Allergen(name=alg_name)
+                db.add(alg)
+                db.flush()
+            
+            meal_alg = MealAllergen(
+                meal_id=meal.meal_id,
+                allergen_id=alg.allergen_id
+            )
+            db.add(meal_alg)
+
+
 def run_seed():
+    from core.database import init_db
+    init_db()
     db = SessionLocal()
     try:
         base_dir = os.path.dirname(__file__)
@@ -188,6 +288,14 @@ def run_seed():
         seed_medications(db, meds_data)
         seed_conditions(db, conds_data)
         
+        # Seed meals
+        meals_path = os.path.join(base_dir, 'seeds', 'meals_indian.json')
+        if os.path.exists(meals_path):
+            with open(meals_path, 'r', encoding='utf-8') as f:
+                meals_data = json.load(f)
+            seed_meals(db, meals_data)
+            print(f"Seeded {len(meals_data)} meals.")
+        
         db.commit()
         print("Seed completed successfully.")
     except Exception as e:
@@ -199,3 +307,4 @@ def run_seed():
 
 if __name__ == "__main__":
     run_seed()
+

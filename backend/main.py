@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routes import recommendations, nlp, chat, auth, admin
+from api.routes import profile, meal_plan, meals, grocery, admin_meals
 from core.config import settings
 
 app = FastAPI(
     title="NutriGuard AI API",
-    description="AI-Powered Personalized Diet & Medication Nutrition System",
-    version="1.0.0"
+    description="AI-Powered Personalized Diet & Medication Nutrition System with Indian Meal Planning",
+    version="2.0.0"
 )
 
 # CORS
@@ -40,6 +41,7 @@ async def global_exception_handler(request: Request, exc: Exception):
         }
     )
 
+# Existing routers
 app.include_router(
     auth.router,
     prefix="/api/v1/auth",
@@ -68,6 +70,37 @@ app.include_router(
     admin.router,
     prefix="/api/v1/admin",
     tags=["admin"]
+)
+
+# New meal planning routers
+app.include_router(
+    profile.router,
+    prefix="/api/v1/me",
+    tags=["profile"]
+)
+
+app.include_router(
+    meal_plan.router,
+    prefix="/api/v1/me/meal-plan",
+    tags=["meal-plan"]
+)
+
+app.include_router(
+    meals.router,
+    prefix="/api/v1/meals",
+    tags=["meals"]
+)
+
+app.include_router(
+    grocery.router,
+    prefix="/api/v1/me/grocery",
+    tags=["grocery"]
+)
+
+app.include_router(
+    admin_meals.router,
+    prefix="/api/v1/admin/meals",
+    tags=["admin-meals"]
 )
 
 @app.get("/health")

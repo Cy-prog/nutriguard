@@ -32,6 +32,16 @@ class UserProfile(Base):
     activity_level = Column(String)
     dietary_pattern = Column(String)
     
+    # Meal planning fields
+    fitness_goal = Column(String)  # WEIGHT_LOSS, WEIGHT_MAINTENANCE, WEIGHT_GAIN, MUSCLE_GAIN, GENERAL_HEALTH
+    diet_type = Column(String)  # VEGETARIAN, VEGAN, EGGETARIAN, NON_VEGETARIAN, JAIN
+    regional_preference = Column(String)  # NORTH_INDIAN, SOUTH_INDIAN, WEST_INDIAN, EAST_INDIAN, CENTRAL_INDIAN, ANY
+    favorite_foods = Column(JSON, default=list)
+    disliked_foods = Column(JSON, default=list)
+    preferred_meal_spice_level = Column(String)  # MILD, MEDIUM, SPICY
+    preferred_cuisine = Column(String)
+    onboarding_completed = Column(Boolean, default=False)
+    
     nutritional_goals = Column(JSON, default=list)
     cuisine_preferences = Column(JSON, default=list)
     food_preferences = Column(JSON, default=list)

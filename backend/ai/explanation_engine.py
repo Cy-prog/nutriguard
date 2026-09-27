@@ -9,7 +9,10 @@ class ExplanationResponse(BaseModel):
 
 class ExplanationEngine:
     def __init__(self, api_key: str = None):
-        self.client = genai.Client(api_key=api_key) if api_key else genai.Client()
+        try:
+            self.client = genai.Client(api_key=api_key) if api_key else genai.Client()
+        except Exception:
+            self.client = None
         self.system_prompt = """
 You are the NutriGuard Explanation Engine. 
 You will be given a strictly evaluated deterministic medical result for a food.

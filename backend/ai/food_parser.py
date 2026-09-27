@@ -27,7 +27,10 @@ class FoodQueryIntent(BaseModel):
 
 class FoodParser:
     def __init__(self, api_key: str = None):
-        self.client = genai.Client(api_key=api_key) if api_key else genai.Client()
+        try:
+            self.client = genai.Client(api_key=api_key) if api_key else genai.Client()
+        except Exception:
+            self.client = None
         self.system_prompt = """
 You are a specialized food intent parser for NutriGuard. 
 Your job is to strictly extract the intent and entities from a user's food query.
@@ -36,6 +39,8 @@ If the user asks "Can I eat it?", extract 'it' as an uncertain entity.
 """
 
     def parse(self, text: str) -> FoodQueryIntent:
+        if not self.client:
+            raise ValueError("Gemini Client not initialized")
         interaction = self.client.interactions.create(
             model="gemini-3.7-flash",
             system_instruction=self.system_prompt,

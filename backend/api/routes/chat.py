@@ -24,9 +24,6 @@ from sqlalchemy.orm import Session
 async def chat_food(request: ChatRequest, db_session: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     try:
         try:
-            from core.config import settings
-            if not settings.GEMINI_API_KEY:
-                raise ValueError("No API key — using keyword fallback")
             parser = FoodParser()
             intent_res = parser.parse(request.message)
         except Exception:
