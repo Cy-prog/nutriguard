@@ -4,6 +4,8 @@ from core.config import settings
 
 # Use DATABASE_URL from settings (reads from env var / .env)
 SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
+if SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
+    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 connect_args = {}
 if "sqlite" in SQLALCHEMY_DATABASE_URL:

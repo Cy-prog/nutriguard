@@ -7,5 +7,4 @@ from .rule import Rule, RuleTrigger, RuleTarget, RuleEvaluation
 from .evidence import DataSource, Evidence, RuleEvidence
 from .audit import AuditLog
 from .meal import Meal, Ingredient, MealIngredient, MealAllergen
-from .meal_plan import DailyMealPlan, DailyMealPlanItem
-
+from .meal_plan import DailyMealPlan, DailyMealPlanItem, MealPlan, MealPlanMeal
