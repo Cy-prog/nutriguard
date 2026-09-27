@@ -68,6 +68,11 @@ def migrate_sqlite():
     print("SQLite migration check complete.")
 
 if __name__ == "__main__":
-    migrate_sqlite()
+    from core.database import SQLALCHEMY_DATABASE_URL, engine, init_db
+    if "sqlite" in SQLALCHEMY_DATABASE_URL:
+        migrate_sqlite()
+    else:
+        print("Ensuring relational database schema exists...")
+        init_db()
     from data.seed import run_seed
     run_seed()

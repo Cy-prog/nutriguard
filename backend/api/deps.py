@@ -9,19 +9,7 @@ from uuid import UUID
 from core.config import settings
 from models.base import Base
 from models.user import User
-from sqlalchemy import create_engine
-
-# Need to refactor database session generation here, assuming standard SQLAlchemy dependency
-engine = create_engine(settings.DATABASE_URL, connect_args={"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {})
-
-def get_db() -> Generator:
-    from sqlalchemy.orm import sessionmaker
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+from core.database import engine, get_db, SessionLocal
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"/api/v1/auth/login")
 

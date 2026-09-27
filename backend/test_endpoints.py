@@ -2,8 +2,9 @@ import urllib.request
 import urllib.error
 import urllib.parse
 import json
+import os
 
-BASE = "http://127.0.0.1:8001"
+BASE = os.environ.get("BASE_URL", "http://127.0.0.1:8000")
 
 def run_smoke_test():
     # 1. Health check

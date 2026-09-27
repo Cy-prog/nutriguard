@@ -5,7 +5,7 @@
 [![React](https://img.shields.io/badge/React-18.3-61DAFB.svg)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-5.4-646CFF.svg)](https://vitejs.dev)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC.svg)](https://tailwindcss.com)
-[![Tests](https://img.shields.io/badge/Pytest-82%2F82%20Passing-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/Pytest-87%2F87%20Passing-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 NutriGuard is an AI-powered nutrition intelligence and Indian meal planning platform. Unlike generic Western calorie-counting apps, NutriGuard is purpose-built for Indian kitchens—measuring meals in rotis, katoris, dals, and sabzis across regional cuisines (North, South, West, East, and Pan-Indian) while enforcing deterministic clinical safety guardrails against prescription medications and chronic health conditions.
@@ -163,7 +163,7 @@ npm run build
 
 ## Running the Automated Test Suite
 
-NutriGuard features 82 unit, integration, and clinical safety regression tests:
+NutriGuard features 87 unit, integration, and clinical safety regression tests:
 
 ```bash
 cd backend

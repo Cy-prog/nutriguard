@@ -18,6 +18,21 @@ export default function GroceryList() {
 
   const handlePrint = () => window.print();
 
+  const groupedCategories = React.useMemo(() => {
+    if (!currentApi.data?.items) return {};
+    if (!Array.isArray(currentApi.data.items)) return currentApi.data.items;
+    return currentApi.data.items.reduce((acc, item) => {
+      const cat = item.category || 'Pantry Staples';
+      if (!acc[cat]) acc[cat] = [];
+      acc[cat].push({
+        name: item.local_name ? `${item.ingredient_name || item.name} (${item.local_name})` : (item.ingredient_name || item.name),
+        quantity: item.total_quantity !== undefined ? item.total_quantity : item.quantity,
+        unit: item.unit || ''
+      });
+      return acc;
+    }, {});
+  }, [currentApi.data]);
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div className="flex justify-between items-center bg-white p-6 rounded-2xl border shadow-sm">
@@ -36,9 +51,9 @@ export default function GroceryList() {
 
       {currentApi.loading ? (
         <LoadingSkeleton count={3} />
-      ) : currentApi.data && Object.keys(currentApi.data.items).length > 0 ? (
+      ) : Object.keys(groupedCategories).length > 0 ? (
         <div className="bg-white rounded-2xl border p-8 shadow-sm">
-          {Object.entries(currentApi.data.items).map(([category, items]) => (
+          {Object.entries(groupedCategories).map(([category, items]) => (
             <div key={category} className="mb-8 last:mb-0">
               <h2 className="text-xl font-bold text-brand-600 mb-4 capitalize border-b pb-2">{category.replace('_', ' ')}</h2>
               <ul className="grid md:grid-cols-2 gap-4">

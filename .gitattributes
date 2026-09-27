@@ -1,0 +1,4 @@
+# Ensure shell scripts always use LF line endings on Unix/Render
+*.sh text eol=lf
+*.bash text eol=lf
+Procfile text eol=lf

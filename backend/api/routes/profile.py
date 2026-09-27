@@ -54,6 +54,8 @@ def update_my_profile(
     return profile
 
 
+@router.get("/targets", response_model=NutritionTargetsResponse)
+@router.get("/profile/targets", response_model=NutritionTargetsResponse)
 @router.get("/nutrition-targets", response_model=NutritionTargetsResponse)
 def get_nutrition_targets(
     db: Session = Depends(get_db),
@@ -78,10 +80,15 @@ def get_nutrition_targets(
         bmr=targets.bmr,
         tdee=targets.tdee,
         target_calories=targets.target_calories,
+        daily_calories=targets.target_calories,
         protein_g=targets.protein_g,
+        daily_protein_g=targets.protein_g,
         carbs_g=targets.carbs_g,
+        daily_carbs_g=targets.carbs_g,
         fat_g=targets.fat_g,
+        daily_fat_g=targets.fat_g,
         fiber_g=targets.fiber_g,
+        daily_fiber_g=targets.fiber_g,
         water_ml=targets.water_ml,
         calcium_mg=targets.calcium_mg,
         iron_mg=targets.iron_mg,

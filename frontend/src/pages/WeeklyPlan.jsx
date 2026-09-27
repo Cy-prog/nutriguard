@@ -37,9 +37,9 @@ export default function WeeklyPlan() {
 
       {weeklyApi.loading ? (
         <LoadingSkeleton count={3} />
-      ) : weeklyApi.data ? (
+      ) : (weeklyApi.data?.daily_plans?.length > 0 || weeklyApi.data?.days?.length > 0 || (Array.isArray(weeklyApi.data) && weeklyApi.data.length > 0)) ? (
         <div className="grid gap-6">
-          {(weeklyApi.data.days || (Array.isArray(weeklyApi.data) ? weeklyApi.data : [])).map((day, idx) => (
+          {(weeklyApi.data.daily_plans || weeklyApi.data.days || (Array.isArray(weeklyApi.data) ? weeklyApi.data : [])).map((day, idx) => (
             <div key={idx} className="bg-white rounded-xl border p-6">
               <h3 className="font-bold text-lg mb-4">{day.date || `Day ${idx + 1}`}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

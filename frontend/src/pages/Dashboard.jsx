@@ -56,20 +56,20 @@ export default function Dashboard() {
         <>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div className="bg-white p-4 rounded-xl border flex flex-col items-center">
-              <NutritionProgress actual={plan.total_calories} target={plan.target_calories || 2000} label="Calories" color="text-brand-500" />
+              <NutritionProgress actual={plan.total_calories || plan.actual_calories || 0} target={plan.target_calories || 2000} label="Calories" color="text-brand-500" />
             </div>
             <div className="bg-white p-4 rounded-xl border flex flex-col items-center">
-              <NutritionProgress actual={plan.total_protein} target={plan.target_protein || 150} label="Protein (g)" color="text-blue-500" />
+              <NutritionProgress actual={plan.total_protein || plan.actual_protein_g || 0} target={plan.target_protein || plan.target_protein_g || 120} label="Protein (g)" color="text-blue-500" />
             </div>
             <div className="bg-white p-4 rounded-xl border flex flex-col items-center">
-              <NutritionProgress actual={plan.total_carbs} target={plan.target_carbs || 250} label="Carbs (g)" color="text-yellow-500" />
+              <NutritionProgress actual={plan.total_carbs || plan.actual_carbs_g || 0} target={plan.target_carbs || plan.target_carbs_g || 250} label="Carbs (g)" color="text-yellow-500" />
             </div>
             <div className="bg-white p-4 rounded-xl border flex flex-col items-center">
-              <NutritionProgress actual={plan.total_fat} target={plan.target_fat || 65} label="Fat (g)" color="text-red-500" />
+              <NutritionProgress actual={plan.total_fat || plan.actual_fat_g || 0} target={plan.target_fat || plan.target_fat_g || 65} label="Fat (g)" color="text-red-500" />
             </div>
             <div className="bg-white p-4 rounded-xl border flex flex-col items-center justify-center">
                <div className="text-center">
-                 <div className="text-2xl font-bold text-gray-900">{Math.round(plan.health_score)}/100</div>
+                 <div className="text-2xl font-bold text-gray-900">{Math.round(plan.health_score || plan.overall_score || plan.nutrition_score || 85)}/100</div>
                  <div className="text-sm text-gray-500">Health Score</div>
                </div>
             </div>

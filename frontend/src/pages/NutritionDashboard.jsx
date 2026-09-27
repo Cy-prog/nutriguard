@@ -29,7 +29,7 @@ export default function NutritionDashboard() {
       <div className="grid md:grid-cols-2 gap-6">
         <div className="bg-white p-8 rounded-2xl border shadow-sm flex flex-col items-center">
           <h2 className="text-xl font-bold mb-6">Caloric Goal</h2>
-          <NutritionProgress actual={targets.daily_calories} target={targets.daily_calories} label="Calories" color="text-brand-500" size={200} />
+          <NutritionProgress actual={targets.daily_calories || targets.target_calories || 2000} target={targets.daily_calories || targets.target_calories || 2000} label="Calories" color="text-brand-500" size={200} />
           <p className="text-gray-500 mt-4 text-center">Calculated based on your TDEE and goal.</p>
         </div>
         
@@ -37,19 +37,19 @@ export default function NutritionDashboard() {
           <h2 className="text-xl font-bold mb-6 text-center">Macronutrients</h2>
           <div className="space-y-6">
             <div>
-              <div className="flex justify-between mb-1"><span className="font-medium text-gray-700">Protein</span><span>{Math.round(targets.daily_protein_g)}g</span></div>
+              <div className="flex justify-between mb-1"><span className="font-medium text-gray-700">Protein</span><span>{Math.round(targets.daily_protein_g || targets.protein_g || 120)}g</span></div>
               <div className="w-full bg-gray-200 rounded-full h-3"><div className="bg-blue-500 h-3 rounded-full" style={{width: '100%'}}></div></div>
             </div>
             <div>
-              <div className="flex justify-between mb-1"><span className="font-medium text-gray-700">Carbs</span><span>{Math.round(targets.daily_carbs_g)}g</span></div>
+              <div className="flex justify-between mb-1"><span className="font-medium text-gray-700">Carbs</span><span>{Math.round(targets.daily_carbs_g || targets.carbs_g || 220)}g</span></div>
               <div className="w-full bg-gray-200 rounded-full h-3"><div className="bg-yellow-500 h-3 rounded-full" style={{width: '100%'}}></div></div>
             </div>
             <div>
-              <div className="flex justify-between mb-1"><span className="font-medium text-gray-700">Fat</span><span>{Math.round(targets.daily_fat_g)}g</span></div>
+              <div className="flex justify-between mb-1"><span className="font-medium text-gray-700">Fat</span><span>{Math.round(targets.daily_fat_g || targets.fat_g || 60)}g</span></div>
               <div className="w-full bg-gray-200 rounded-full h-3"><div className="bg-red-500 h-3 rounded-full" style={{width: '100%'}}></div></div>
             </div>
             <div>
-              <div className="flex justify-between mb-1"><span className="font-medium text-gray-700">Fiber</span><span>{Math.round(targets.daily_fiber_g || 25)}g</span></div>
+              <div className="flex justify-between mb-1"><span className="font-medium text-gray-700">Fiber</span><span>{Math.round(targets.daily_fiber_g || targets.fiber_g || 25)}g</span></div>
               <div className="w-full bg-gray-200 rounded-full h-3"><div className="bg-green-500 h-3 rounded-full" style={{width: '100%'}}></div></div>
             </div>
           </div>

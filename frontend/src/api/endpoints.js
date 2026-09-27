@@ -32,7 +32,11 @@ export const meals = {
 };
 
 export const foods = {
-  searchRawFoods: (params) => client.get('/meals/raw-foods/search', { params }),
+  listFoods: (params) => client.get('/foods', { params }),
+  getFood: (id) => client.get(`/foods/${id}`),
+  searchRawFoods: (params) => client.get('/foods', { params }),
+  getSubstitutions: (food) => client.get(`/foods/substitutions?food=${encodeURIComponent(food)}`),
+  createFood: (data) => client.post('/foods', data),
 };
 
 export const grocery = {

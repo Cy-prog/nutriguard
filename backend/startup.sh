@@ -2,11 +2,7 @@
 set -e
 
 echo "=== NutriGuard Startup ==="
-echo "Running Alembic migrations..."
-python -m alembic upgrade head
+python migrate_and_seed.py
 
-echo "Running seed data..."
-python -m data.seed
-
-echo "Starting FastAPI..."
+echo "Starting FastAPI on 0.0.0.0:${PORT:-8000}..."
 exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}

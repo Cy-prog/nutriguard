@@ -80,6 +80,12 @@ class NutritionTargetsResponse(BaseModel):
     folate_mcg: float
     meal_distribution: Dict[str, float]
     disclaimer: str
+    # Aliases for UI flexibility
+    daily_calories: Optional[float] = None
+    daily_protein_g: Optional[float] = None
+    daily_carbs_g: Optional[float] = None
+    daily_fat_g: Optional[float] = None
+    daily_fiber_g: Optional[float] = None
 
 
 # ─── Meal Schemas ────────────────────────────────────────────
@@ -214,6 +220,12 @@ class DailyMealPlanResponse(BaseModel):
     actual_carbs_g: Optional[float] = None
     actual_fat_g: Optional[float] = None
     actual_fiber_g: Optional[float] = None
+    # Aliases for frontend flexibility
+    total_calories: Optional[float] = None
+    total_protein: Optional[float] = None
+    total_carbs: Optional[float] = None
+    total_fat: Optional[float] = None
+    health_score: Optional[float] = None
     nutrition_score: Optional[float] = None
     variety_score: Optional[float] = None
     preference_score: Optional[float] = None
@@ -225,6 +237,7 @@ class WeeklyMealPlanResponse(BaseModel):
     start_date: date
     end_date: date
     daily_plans: List[DailyMealPlanResponse]
+    days: Optional[List[DailyMealPlanResponse]] = None
     weekly_nutrition_score: Optional[float] = None
     weekly_variety_score: Optional[float] = None
 

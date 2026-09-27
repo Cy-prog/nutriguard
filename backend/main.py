@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routes import recommendations, nlp, chat, auth, admin
-from api.routes import profile, meal_plan, meals, grocery, admin_meals
+from api.routes import profile, meal_plan, meals, grocery, admin_meals, foods
 from core.config import settings
 from sqlalchemy import text
 
@@ -100,6 +100,28 @@ app.include_router(
     meals.router,
     prefix="/api/v1/meals",
     tags=["meals"]
+)
+
+app.include_router(
+    foods.router,
+    prefix="/api/v1/foods",
+    tags=["foods"]
+)
+app.include_router(
+    foods.router,
+    prefix="/api/foods",
+    tags=["foods-compat"]
+)
+
+app.include_router(
+    meals.router,
+    prefix="/api/v1/recipes",
+    tags=["recipes"]
+)
+app.include_router(
+    meals.router,
+    prefix="/api/recipes",
+    tags=["recipes-compat"]
 )
 
 app.include_router(
