@@ -1,7 +1,9 @@
+from __future__ import annotations
 import json
 import os
 import sys
 from uuid import uuid4
+from sqlalchemy.orm import Session
 
 # Add parent directory to path so we can import from core and models
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -402,7 +404,12 @@ def seed_drug_nutrient_depletions(db):
     print('DrugNutrientDepletion seeding complete.')
 
 def seed_drug_food_interactions(db: Session):
-    with open('data/seeds/interactions.json') as f:
+    base_dir = os.path.dirname(__file__)
+    filepath = os.path.join(base_dir, 'seeds', 'interactions.json')
+    if not os.path.exists(filepath):
+        print(f"WARNING: interactions seed file not found at {filepath}")
+        return
+    with open(filepath, 'r', encoding='utf-8') as f:
         interactions = json.load(f)
     
     for item in interactions:
