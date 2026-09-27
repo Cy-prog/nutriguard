@@ -177,6 +177,12 @@ def seed_conditions(db, conditions_data):
         db.add(cond)
         db.flush()
         
+        PRIORITY_VALUES = {
+            "CRITICAL": 1,
+            "HIGH": 1,
+            "MEDIUM": 2,
+            "LOW": 3,
+        }
         for rule in item.get('nutrition_rules', []):
             # Find nutrient
             nutrient_name = rule.get('nutrient')
@@ -188,11 +194,19 @@ def seed_conditions(db, conditions_data):
                     db.add(n)
                     db.flush()
                 nutrient_id = n.nutrient_id
+
+            raw_priority = rule.get('priority', 2)
+            if isinstance(raw_priority, str):
+                priority_val = PRIORITY_VALUES.get(raw_priority.strip().upper(), 2)
+            elif isinstance(raw_priority, (int, float)):
+                priority_val = int(raw_priority)
+            else:
+                priority_val = 2
                 
             cnr = ConditionNutritionRule(
                 condition_id=cond.condition_id,
                 action=rule['action'],
-                priority=rule['priority'],
+                priority=priority_val,
                 nutrient_id=nutrient_id,
                 threshold_amount=rule.get('threshold_amount'),
                 threshold_unit=rule.get('threshold_unit'),

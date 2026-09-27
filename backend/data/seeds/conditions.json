@@ -6,25 +6,25 @@
     "nutrition_rules": [
       {
         "action": "RESTRICT",
-        "priority": "HIGH",
+        "priority": 1,
         "nutrient": "sugar_g",
         "rationale": "Restrict sugar_g for type_2_diabetes"
       },
       {
         "action": "RESTRICT",
-        "priority": "HIGH",
+        "priority": 1,
         "nutrient": "refined_carbs_g",
         "rationale": "Restrict refined_carbs_g for type_2_diabetes"
       },
       {
         "action": "ENCOURAGE",
-        "priority": "MEDIUM",
+        "priority": 2,
         "nutrient": "fiber_g",
         "rationale": "Encourage fiber_g for type_2_diabetes"
       },
       {
         "action": "ENCOURAGE",
-        "priority": "MEDIUM",
+        "priority": 2,
         "nutrient": "protein_g",
         "rationale": "Encourage protein_g for type_2_diabetes"
       }
@@ -37,19 +37,19 @@
     "nutrition_rules": [
       {
         "action": "RESTRICT",
-        "priority": "HIGH",
+        "priority": 1,
         "nutrient": "sodium_mg",
         "rationale": "Restrict sodium_mg for hypertension"
       },
       {
         "action": "ENCOURAGE",
-        "priority": "MEDIUM",
+        "priority": 2,
         "nutrient": "potassium_mg",
         "rationale": "Encourage potassium_mg for hypertension"
       },
       {
         "action": "ENCOURAGE",
-        "priority": "MEDIUM",
+        "priority": 2,
         "nutrient": "magnesium_mg",
         "rationale": "Encourage magnesium_mg for hypertension"
       }
@@ -62,13 +62,13 @@
     "nutrition_rules": [
       {
         "action": "ENCOURAGE",
-        "priority": "MEDIUM",
+        "priority": 2,
         "nutrient": "iron_mg",
         "rationale": "Encourage iron_mg for iron_def_anemia"
       },
       {
         "action": "ENCOURAGE",
-        "priority": "MEDIUM",
+        "priority": 2,
         "nutrient": "vitamin_c_mg",
         "rationale": "Encourage vitamin_c_mg for iron_def_anemia"
       }
@@ -81,25 +81,25 @@
     "nutrition_rules": [
       {
         "action": "RESTRICT",
-        "priority": "HIGH",
+        "priority": 1,
         "nutrient": "caffeine_mg",
         "rationale": "Restrict caffeine_mg for osteoporosis"
       },
       {
         "action": "RESTRICT",
-        "priority": "HIGH",
+        "priority": 1,
         "nutrient": "alcohol_g",
         "rationale": "Restrict alcohol_g for osteoporosis"
       },
       {
         "action": "ENCOURAGE",
-        "priority": "MEDIUM",
+        "priority": 2,
         "nutrient": "calcium_mg",
         "rationale": "Encourage calcium_mg for osteoporosis"
       },
       {
         "action": "ENCOURAGE",
-        "priority": "MEDIUM",
+        "priority": 2,
         "nutrient": "vitamin_d_mcg",
         "rationale": "Encourage vitamin_d_mcg for osteoporosis"
       }
@@ -118,19 +118,19 @@
     "nutrition_rules": [
       {
         "action": "RESTRICT",
-        "priority": "HIGH",
+        "priority": 1,
         "nutrient": "purines_mg",
         "rationale": "Restrict purines_mg for gout"
       },
       {
         "action": "RESTRICT",
-        "priority": "HIGH",
+        "priority": 1,
         "nutrient": "alcohol_g",
         "rationale": "Restrict alcohol_g for gout"
       },
       {
         "action": "ENCOURAGE",
-        "priority": "MEDIUM",
+        "priority": 2,
         "nutrient": "water_ml",
         "rationale": "Encourage water_ml for gout"
       }
@@ -143,7 +143,7 @@
     "nutrition_rules": [
       {
         "action": "RESTRICT",
-        "priority": "HIGH",
+        "priority": 1,
         "nutrient": "potassium_mg",
         "is_conditional": true,
         "condition_parameter": "eGFR",
@@ -153,7 +153,7 @@
       },
       {
         "action": "RESTRICT",
-        "priority": "HIGH",
+        "priority": 1,
         "nutrient": "phosphorus_mg",
         "is_conditional": true,
         "condition_parameter": "eGFR",
@@ -163,7 +163,7 @@
       },
       {
         "action": "RESTRICT",
-        "priority": "HIGH",
+        "priority": 1,
         "nutrient": "protein_g",
         "is_conditional": true,
         "condition_parameter": "eGFR",
@@ -180,25 +180,25 @@
     "nutrition_rules": [
       {
         "action": "RESTRICT",
-        "priority": "HIGH",
+        "priority": 1,
         "nutrient": "saturated_fat_g",
         "rationale": "Restrict saturated_fat_g for hyperlipidemia"
       },
       {
         "action": "RESTRICT",
-        "priority": "HIGH",
+        "priority": 1,
         "nutrient": "trans_fat_g",
         "rationale": "Restrict trans_fat_g for hyperlipidemia"
       },
       {
         "action": "ENCOURAGE",
-        "priority": "MEDIUM",
+        "priority": 2,
         "nutrient": "fiber_g",
         "rationale": "Encourage fiber_g for hyperlipidemia"
       },
       {
         "action": "ENCOURAGE",
-        "priority": "MEDIUM",
+        "priority": 2,
         "nutrient": "omega_3_mg",
         "rationale": "Encourage omega_3_mg for hyperlipidemia"
       }
