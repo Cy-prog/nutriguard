@@ -37,33 +37,33 @@ export default function MealDetail() {
         
         <div className="p-8">
           <div className="grid grid-cols-3 gap-6 text-center divide-x border-b pb-8 mb-8">
-            <div><Clock className="w-6 h-6 mx-auto text-gray-400 mb-2" /><span className="font-bold">{meal.prep_time_minutes} mins</span></div>
-            <div><ChefHat className="w-6 h-6 mx-auto text-gray-400 mb-2" /><span className="font-bold capitalize">{meal.difficulty.toLowerCase()}</span></div>
-            <div><Users className="w-6 h-6 mx-auto text-gray-400 mb-2" /><span className="font-bold">1 Serving</span></div>
+            <div><Clock className="w-6 h-6 mx-auto text-gray-400 mb-2" /><span className="font-bold">{meal.preparation_time_minutes || meal.prep_time_minutes || 25} mins</span></div>
+            <div><ChefHat className="w-6 h-6 mx-auto text-gray-400 mb-2" /><span className="font-bold capitalize">{meal.difficulty ? meal.difficulty.toLowerCase() : 'moderate'}</span></div>
+            <div><Users className="w-6 h-6 mx-auto text-gray-400 mb-2" /><span className="font-bold">{meal.serving_description || "1 Serving"}</span></div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-12">
             <div>
               <h2 className="text-2xl font-bold mb-6">Ingredients</h2>
-              {recipe?.ingredients ? (
+              {(recipe?.ingredients || meal?.ingredients)?.length > 0 ? (
                 <ul className="space-y-3">
-                  {recipe.ingredients.map((ing, i) => (
+                  {(recipe?.ingredients || meal?.ingredients).map((ing, i) => (
                     <li key={i} className="flex items-center space-x-3 text-gray-700">
                       <div className="w-2 h-2 rounded-full bg-brand-500"></div>
-                      <span>{ing.quantity} {ing.unit} {ing.name}</span>
+                      <span>{ing.quantity ? `${ing.quantity} ${ing.unit || ''}` : ''} {ing.name}</span>
                     </li>
                   ))}
                 </ul>
-              ) : <p>Loading ingredients...</p>}
+              ) : <p className="text-gray-500 text-sm">Authentic Indian pantry staples.</p>}
             </div>
 
             <div>
               <h2 className="text-2xl font-bold mb-6">Nutrition per serving</h2>
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-4 rounded-xl"><div className="text-sm text-gray-500">Calories</div><div className="text-xl font-bold">{Math.round(meal.calories)} kcal</div></div>
-                <div className="bg-gray-50 p-4 rounded-xl"><div className="text-sm text-gray-500">Protein</div><div className="text-xl font-bold">{Math.round(meal.protein_g)} g</div></div>
-                <div className="bg-gray-50 p-4 rounded-xl"><div className="text-sm text-gray-500">Carbs</div><div className="text-xl font-bold">{Math.round(meal.carbs_g)} g</div></div>
-                <div className="bg-gray-50 p-4 rounded-xl"><div className="text-sm text-gray-500">Fat</div><div className="text-xl font-bold">{Math.round(meal.fat_g)} g</div></div>
+                <div className="bg-gray-50 p-4 rounded-xl"><div className="text-sm text-gray-500">Calories</div><div className="text-xl font-bold">{Math.round(meal.calories || 0)} kcal</div></div>
+                <div className="bg-gray-50 p-4 rounded-xl"><div className="text-sm text-gray-500">Protein</div><div className="text-xl font-bold">{Math.round(meal.protein_g || 0)} g</div></div>
+                <div className="bg-gray-50 p-4 rounded-xl"><div className="text-sm text-gray-500">Carbs</div><div className="text-xl font-bold">{Math.round(meal.carbohydrates_g || meal.carbs_g || 0)} g</div></div>
+                <div className="bg-gray-50 p-4 rounded-xl"><div className="text-sm text-gray-500">Fat</div><div className="text-xl font-bold">{Math.round(meal.fat_g || 0)} g</div></div>
               </div>
             </div>
           </div>
@@ -71,17 +71,19 @@ export default function MealDetail() {
       </div>
 
       <div className="bg-white rounded-2xl border p-8 shadow-sm">
-        <h2 className="text-2xl font-bold mb-6">Instructions</h2>
-        {recipe?.instructions ? (
+        <h2 className="text-2xl font-bold mb-6">Preparation Steps</h2>
+        {(recipe?.preparation_steps || recipe?.instructions)?.length > 0 ? (
           <div className="space-y-6">
-            {recipe.instructions.map((step, i) => (
+            {(recipe?.preparation_steps || recipe?.instructions).map((step, i) => (
               <div key={i} className="flex space-x-4">
                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold">{i + 1}</div>
                 <p className="text-gray-700 mt-1">{step}</p>
               </div>
             ))}
           </div>
-        ) : <p>Loading instructions...</p>}
+        ) : (
+          <p className="text-gray-500 text-sm">{recipe?.recipe_text || "Cook according to traditional Indian home-style method."}</p>
+        )}
       </div>
 
       <div className="bg-white rounded-2xl border p-8 shadow-sm">

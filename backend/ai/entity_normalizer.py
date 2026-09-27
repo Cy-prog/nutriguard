@@ -21,26 +21,30 @@ class EntityNormalizer:
         # Exact/ilike match on name
         cond = self.db.query(Condition).filter(Condition.name.ilike(f"%{raw}%")).first()
         if cond:
-            return NormalizationResult(str(cond.condition_id), cond.name, 'VALID', ext_cond.raw_name)
+            display_name = cond.name.replace('_', ' ').title()
+            return NormalizationResult(str(cond.condition_id), display_name, 'VALID', ext_cond.raw_name)
             
         # Check aliases
         all_conds = self.db.query(Condition).all()
         for c in all_conds:
             aliases = [a.lower() for a in (c.aliases or [])]
             if raw in aliases:
-                return NormalizationResult(str(c.condition_id), c.name, 'VALID', ext_cond.raw_name)
+                display_name = c.name.replace('_', ' ').title()
+                return NormalizationResult(str(c.condition_id), display_name, 'VALID', ext_cond.raw_name)
                 
         # Heuristics for ambiguity (like "sugar" -> diabetes) should ideally be in DB aliases.
         # If the user says "BP", we map to Hypertension if "BP" is in aliases (it is, as 'High blood pressure', 'HTN')
         if "bp" in raw.split() or "blood pressure" in raw:
             c = self.db.query(Condition).filter(Condition.name.ilike("%Hypertension%")).first()
             if c:
-                return NormalizationResult(str(c.condition_id), c.name, 'VALID', ext_cond.raw_name)
+                display_name = c.name.replace('_', ' ').title()
+                return NormalizationResult(str(c.condition_id), display_name, 'VALID', ext_cond.raw_name)
                 
         if "sugar" in raw or "diabetes" in raw:
             c = self.db.query(Condition).filter(Condition.name.ilike("%Diabetes%")).first()
             if c:
-                return NormalizationResult(str(c.condition_id), c.name, 'VALID', ext_cond.raw_name)
+                display_name = c.name.replace('_', ' ').title()
+                return NormalizationResult(str(c.condition_id), display_name, 'VALID', ext_cond.raw_name)
                 
         return NormalizationResult(None, ext_cond.raw_name, 'AMBIGUOUS', ext_cond.raw_name)
 
@@ -53,13 +57,15 @@ class EntityNormalizer:
             
         med = self.db.query(Medication).filter(Medication.generic_name.ilike(f"%{raw}%")).first()
         if med:
-            return NormalizationResult(str(med.medication_id), med.generic_name, 'VALID', ext_med.raw_name)
+            display_name = med.generic_name.replace('_', ' ').title()
+            return NormalizationResult(str(med.medication_id), display_name, 'VALID', ext_med.raw_name)
             
         all_meds = self.db.query(Medication).all()
         for m in all_meds:
             brands = [b.lower() for b in (m.brand_names or [])]
             if raw in brands:
-                return NormalizationResult(str(m.medication_id), m.generic_name, 'VALID', ext_med.raw_name)
+                display_name = m.generic_name.replace('_', ' ').title()
+                return NormalizationResult(str(m.medication_id), display_name, 'VALID', ext_med.raw_name)
                 
         return NormalizationResult(None, ext_med.raw_name, 'UNKNOWN', ext_med.raw_name)
 

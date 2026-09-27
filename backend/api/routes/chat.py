@@ -168,5 +168,7 @@ async def chat_food(request: ChatRequest, db_session: Session = Depends(get_db),
             }
             
         return {"clarification_required": True, "question": "I'm not sure how to handle that request."}
-    except Exception:
-        return {"clarification_required": True, "question": "An unexpected error occurred. Please try again."}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"clarification_required": True, "question": f"An unexpected error occurred: {e}"}

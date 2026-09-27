@@ -77,3 +77,78 @@ def approve_rule(rule_id: UUID, db: Session = Depends(get_db), current_user: Use
     db.add(log)
     db.commit()
     return {"status": "success", "rule_id": rule_id}
+
+
+@router.get("/stats")
+def get_admin_stats(db: Session = Depends(get_db), current_user: User = Depends(get_current_admin)):
+    from models.meal import Meal
+    from models.medication import Medication
+    total_users = db.query(User).count()
+    total_meals = db.query(Meal).filter(Meal.is_active == True).count()
+    total_foods = db.query(Food).filter(Food.is_active == True).count()
+    total_conditions = db.query(Condition).count()
+    total_medications = db.query(Medication).count()
+    total_rules = db.query(Rule).count()
+
+    return {
+        "total_users": total_users,
+        "total_meals": total_meals,
+        "total_foods": total_foods,
+        "total_conditions": total_conditions,
+        "total_medications": total_medications,
+        "total_rules": total_rules,
+        "system_status": "OPERATIONAL",
+        "version": "2.0.0"
+    }
+
+
+@router.get("/data-sources")
+def get_data_sources(db: Session = Depends(get_db)):
+    sources = [
+        {
+            "id": "ifct-2017",
+            "name": "Indian Food Composition Tables (IFCT)",
+            "institution": "National Institute of Nutrition (ICMR-NIN)",
+            "version": "2017",
+            "url": "https://www.nin.res.in/downloads/IFCT2017.pdf",
+            "license": "Government of India / ICMR Educational & Research License",
+            "attribution": "Longvah T, Ananthan R, Bhaskarachary K, Venkaiah K. Indian Food Composition Tables. National Institute of Nutrition, ICMR, Hyderabad, 2017.",
+            "usage": "Primary authoritative composition for raw Indian crops, cereals, pulses, vegetables, and spices.",
+            "status": "ACTIVE"
+        },
+        {
+            "id": "usda-fdc",
+            "name": "USDA FoodData Central",
+            "institution": "U.S. Department of Agriculture, Agricultural Research Service",
+            "version": "2024",
+            "url": "https://fdc.nal.usda.gov/",
+            "license": "U.S. Public Domain",
+            "attribution": "U.S. Department of Agriculture, Agricultural Research Service. FoodData Central, 2024. fdc.nal.usda.gov.",
+            "usage": "Supplementary micronutrient profiles (Vitamin K, trace minerals, amino acids).",
+            "status": "ACTIVE"
+        },
+        {
+            "id": "open-food-facts",
+            "name": "Open Food Facts",
+            "institution": "Open Food Facts Association",
+            "version": "World / IN Database",
+            "url": "https://world.openfoodfacts.org/",
+            "license": "Open Database License (ODbL) / Database Contents License (DbCL)",
+            "attribution": "Open Food Facts contributors, openfoodfacts.org",
+            "usage": "Packaged Indian food barcodes and nutritional panel metadata.",
+            "status": "ACTIVE"
+        },
+        {
+            "id": "icmr-dgi-2024",
+            "name": "ICMR Dietary Guidelines for Indians & Recommended Dietary Allowances",
+            "institution": "Indian Council of Medical Research - National Institute of Nutrition",
+            "version": "2024 / 2020",
+            "url": "https://www.nin.res.in/",
+            "license": "Government of India Public Nutrition Standard",
+            "attribution": "ICMR-NIN Expert Committee on Nutrient Requirements for Indians, 2020/2024.",
+            "usage": "Reference Daily Intakes (RDAs), Estimated Average Requirements (EAR), and Upper Tolerable Levels (TUL).",
+            "status": "ACTIVE"
+        }
+    ]
+    return sources
+

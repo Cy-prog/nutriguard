@@ -44,6 +44,14 @@ def seed_foods(db, foods_data):
         # Check if food exists (idempotency)
         existing = db.query(Food).filter_by(name=item['name']).first()
         if existing:
+            if existing.glycemic_index is None and item.get('glycemic_index') is not None:
+                existing.glycemic_index = item.get('glycemic_index')
+            if existing.purine_level is None and item.get('purine_level') is not None:
+                existing.purine_level = item.get('purine_level')
+            if existing.vitamin_k_mcg is None and item.get('vitamin_k_mcg') is not None:
+                existing.vitamin_k_mcg = item.get('vitamin_k_mcg')
+            if existing.nutrient_source is None and item.get('nutrient_source') is not None:
+                existing.nutrient_source = item.get('nutrient_source')
             # Seed missing allergens even if food exists
             for alg_name in item.get('allergens', []):
                 alg_name_lower = alg_name.lower()

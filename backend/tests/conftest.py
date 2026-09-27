@@ -7,7 +7,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models.base import Base
-from data.seed import seed_foods, seed_medications, seed_conditions, seed_users
+from data.seed import (
+    seed_foods, seed_medications, seed_conditions, seed_users,
+    seed_drug_nutrient_depletions, seed_drug_food_interactions, seed_meals
+)
 import json
 
 from sqlalchemy.pool import StaticPool
@@ -39,6 +42,14 @@ def seeded_db(engine):
     seed_foods(db, foods_data)
     seed_medications(db, meds_data)
     seed_conditions(db, conds_data)
+    seed_drug_nutrient_depletions(db)
+    seed_drug_food_interactions(db)
+
+    meals_path = os.path.join(base_dir, 'seeds', 'meals_indian.json')
+    if os.path.exists(meals_path):
+        with open(meals_path, 'r', encoding='utf-8') as f:
+            meals_data = json.load(f)
+        seed_meals(db, meals_data)
     
     db.commit()
     

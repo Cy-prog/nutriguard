@@ -219,10 +219,12 @@ class RecommendationService:
             name = c_dict.get("name", "")
             cr = []
             rn = []
-            if name.lower() == 'ckd':
+            if 'ckd' in name.lower() or 'kidney' in name.lower():
                 cr.append(ConditionalRuleSchema(parameter="stage", operator=">=", value=4.0, restrict_nutrients=["potassium_mg"]))
-            elif name.lower() == 'hypertension':
+            elif 'hypertension' in name.lower() or 'blood pressure' in name.lower():
                 rn.append("sodium_mg")
+            elif 'diabetes' in name.lower():
+                rn.append("sugar_g")
                 
             conds.append(ConditionSchema(
                 name=name,

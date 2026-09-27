@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.routes import recommendations, nlp, chat, auth, admin
 from api.routes import profile, meal_plan, meals, grocery, admin_meals
 from core.config import settings
+from sqlalchemy import text
 
 app = FastAPI(
     title="NutriGuard AI API",
@@ -72,17 +73,27 @@ app.include_router(
     tags=["admin"]
 )
 
-# New meal planning routers
+# Meal planning routers
 app.include_router(
     profile.router,
     prefix="/api/v1/me",
     tags=["profile"]
+)
+app.include_router(
+    profile.router,
+    prefix="/api/v1",
+    tags=["profile-compat"]
 )
 
 app.include_router(
     meal_plan.router,
     prefix="/api/v1/me/meal-plan",
     tags=["meal-plan"]
+)
+app.include_router(
+    meal_plan.router,
+    prefix="/api/v1/meal-plan",
+    tags=["meal-plan-compat"]
 )
 
 app.include_router(
@@ -96,6 +107,11 @@ app.include_router(
     prefix="/api/v1/me/grocery",
     tags=["grocery"]
 )
+app.include_router(
+    grocery.router,
+    prefix="/api/v1/grocery",
+    tags=["grocery-compat"]
+)
 
 app.include_router(
     admin_meals.router,
@@ -104,16 +120,34 @@ app.include_router(
 )
 
 @app.get("/health")
+@app.get("/api/v1/health")
 def health_check():
-    return {"status": "healthy"}
+    db_status = "UP"
+    try:
+        from core.database import SessionLocal
+        db = SessionLocal()
+        db.execute(text("SELECT 1"))
+        db.close()
+    except Exception:
+        db_status = "DOWN"
+        
+    ai_status = "CONFIGURED" if settings.GEMINI_API_KEY else "KEYWORD_FALLBACK"
+    return {
+        "status": "UP" if db_status == "UP" else "DEGRADED",
+        "database": db_status,
+        "ai": ai_status,
+        "version": "2.0.0"
+    }
 
 @app.get("/health/ready")
+@app.get("/api/v1/health/ready")
 def readiness_check():
     # Attempt DB connection
     try:
-        from api.deps import engine
-        with engine.connect() as conn:
-            pass
+        from core.database import SessionLocal
+        db = SessionLocal()
+        db.execute(text("SELECT 1"))
+        db.close()
         return {"status": "ready", "database": "healthy"}
     except Exception as e:
         from fastapi import HTTPException
@@ -121,4 +155,9 @@ def readiness_check():
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to NutriGuard Engine API"}
+    return {
+        "name": "NutriGuard AI API",
+        "version": "2.0.0",
+        "description": "Production-Grade AI Nutrition & Indian Meal Recommendation Platform",
+        "docs_url": "/docs"
+    }

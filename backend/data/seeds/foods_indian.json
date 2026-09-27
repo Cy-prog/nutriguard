@@ -1178,7 +1178,7 @@
   },
   {
     "name": "Palak",
-    "aliases": [],
+    "aliases": ["spinach", "palak saag", "spinach leaves"],
     "category": "vegetable",
     "subcategory": null,
     "cuisine_origin": [
@@ -2807,6 +2807,76 @@
     "glycemic_index": null,
     "purine_level": "high",
     "vitamin_k_mcg": null,
+    "nutrient_source": "ICMR_NIN"
+  },
+  {
+    "name": "Peanuts",
+    "aliases": ["peanut", "peanuts", "groundnut", "groundnuts", "moongphali", "mungfali"],
+    "category": "nut",
+    "subcategory": "legume",
+    "cuisine_origin": [
+      "Indian"
+    ],
+    "description": "Raw or roasted peanuts / groundnuts",
+    "is_raw": true,
+    "is_vegetarian": true,
+    "is_vegan": true,
+    "is_jain": true,
+    "is_gluten_free": true,
+    "is_lactose_free": true,
+    "nutrients": [
+      {
+        "name": "calories",
+        "amount": 567.0,
+        "unit": "kcal"
+      },
+      {
+        "name": "protein_g",
+        "amount": 25.8,
+        "unit": "g"
+      },
+      {
+        "name": "carbs_g",
+        "amount": 16.1,
+        "unit": "g"
+      },
+      {
+        "name": "fat_g",
+        "amount": 49.2,
+        "unit": "g"
+      },
+      {
+        "name": "fiber_g",
+        "amount": 8.5,
+        "unit": "g"
+      },
+      {
+        "name": "sodium_mg",
+        "amount": 18.0,
+        "unit": "mg"
+      },
+      {
+        "name": "potassium_mg",
+        "amount": 705.0,
+        "unit": "mg"
+      },
+      {
+        "name": "calcium_mg",
+        "amount": 92.0,
+        "unit": "mg"
+      },
+      {
+        "name": "iron_mg",
+        "amount": 4.6,
+        "unit": "mg"
+      }
+    ],
+    "allergens": [
+      "peanut"
+    ],
+    "glycemic_index": 14,
+    "purine_level": "moderate",
+    "vitamin_k_mcg": 0.0,
     "nutrient_source": "ICMR_NIN"
   }
 ]

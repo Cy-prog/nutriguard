@@ -80,8 +80,8 @@ export default function Dashboard() {
               <h2 className="text-xl font-bold text-gray-900">Today's Meals</h2>
             </div>
             <div className="grid md:grid-cols-3 gap-6">
-              {plan.meals.map(item => (
-                <MealCard key={item.id} meal={item.meal} />
+              {(plan.meals || plan.items || []).map((item, idx) => (
+                <MealCard key={item.id || item.meal_id || idx} meal={item.meal || item} />
               ))}
             </div>
           </div>

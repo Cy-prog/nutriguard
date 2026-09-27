@@ -114,5 +114,71 @@
       }
     ],
     "depletions": []
+  },
+  {
+    "generic_name": "atorvastatin",
+    "drug_class": "Statin",
+    "standard_timing": "evening",
+    "interactions": [
+      {
+        "interaction_type": "food",
+        "food_category": "grapefruit",
+        "severity": "high",
+        "mechanism": "CYP3A4 inhibition increases statin bioavailability.",
+        "recommendation": "Avoid grapefruit and grapefruit juice."
+      }
+    ],
+    "depletions": ["coq10"]
+  },
+  {
+    "generic_name": "rosuvastatin",
+    "drug_class": "Statin",
+    "standard_timing": "evening",
+    "interactions": [],
+    "depletions": ["coq10"]
+  },
+  {
+    "generic_name": "omeprazole",
+    "drug_class": "Proton Pump Inhibitor",
+    "standard_timing": "empty_stomach",
+    "interactions": [],
+    "depletions": ["vitamin_b12", "calcium", "magnesium"]
+  },
+  {
+    "generic_name": "hydrochlorothiazide",
+    "drug_class": "Thiazide Diuretic",
+    "standard_timing": "morning",
+    "interactions": [],
+    "depletions": ["potassium", "magnesium", "zinc"]
+  },
+  {
+    "generic_name": "enalapril",
+    "drug_class": "ACE Inhibitor",
+    "standard_timing": "any",
+    "interactions": [
+      {
+        "interaction_type": "food",
+        "food_category": "potassium_substitutes",
+        "severity": "high",
+        "mechanism": "ACE inhibitors reduce aldosterone, risking hyperkalemia with potassium salts.",
+        "recommendation": "Avoid potassium-based salt substitutes."
+      }
+    ],
+    "depletions": ["zinc"]
+  },
+  {
+    "generic_name": "ramipril",
+    "drug_class": "ACE Inhibitor",
+    "standard_timing": "any",
+    "interactions": [
+      {
+        "interaction_type": "food",
+        "food_category": "potassium_substitutes",
+        "severity": "high",
+        "mechanism": "ACE inhibitors reduce aldosterone, risking hyperkalemia with potassium salts.",
+        "recommendation": "Avoid potassium-based salt substitutes."
+      }
+    ],
+    "depletions": ["zinc"]
   }
 ]

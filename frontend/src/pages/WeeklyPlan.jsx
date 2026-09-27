@@ -39,15 +39,15 @@ export default function WeeklyPlan() {
         <LoadingSkeleton count={3} />
       ) : weeklyApi.data ? (
         <div className="grid gap-6">
-          {weeklyApi.data.days.map((day, idx) => (
+          {(weeklyApi.data.days || (Array.isArray(weeklyApi.data) ? weeklyApi.data : [])).map((day, idx) => (
             <div key={idx} className="bg-white rounded-xl border p-6">
-              <h3 className="font-bold text-lg mb-4">{day.date}</h3>
-              <div className="grid grid-cols-3 gap-4">
-                {day.meals.map((m, i) => (
+              <h3 className="font-bold text-lg mb-4">{day.date || `Day ${idx + 1}`}</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {(day.meals || day.items || []).map((m, i) => (
                   <div key={i} className="p-4 border rounded-lg bg-gray-50">
-                    <p className="font-medium text-sm text-brand-600 mb-1">{m.meal_type}</p>
-                    <p className="font-bold text-gray-900 truncate">{m.meal.name}</p>
-                    <p className="text-xs text-gray-500">{Math.round(m.meal.calories)} kcal</p>
+                    <p className="font-medium text-sm text-brand-600 mb-1 capitalize">{(m.meal_type || 'Meal').toLowerCase()}</p>
+                    <p className="font-bold text-gray-900 truncate">{m.meal?.name || m.name || "Meal"}</p>
+                    <p className="text-xs text-gray-500">{Math.round(m.meal?.calories || m.calories || 0)} kcal</p>
                   </div>
                 ))}
               </div>

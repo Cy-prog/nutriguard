@@ -28,9 +28,30 @@ export const meals = {
   getRecipe: (id) => client.get(`/meals/${id}/recipe`),
   getNutrition: (id) => client.get(`/meals/${id}/nutrition`),
   getVideo: (id) => client.get(`/meals/${id}/video`),
+  searchRawFoods: (params) => client.get('/meals/raw-foods/search', { params }),
+};
+
+export const foods = {
+  searchRawFoods: (params) => client.get('/meals/raw-foods/search', { params }),
 };
 
 export const grocery = {
   getDailyGrocery: () => client.get('/grocery/daily'),
   getWeeklyGrocery: () => client.get('/grocery/weekly'),
+};
+
+export const chat = {
+  sendMessage: (message, userContext = {}) => client.post('/chat/food', { message, user_context: userContext }),
+};
+
+export const admin = {
+  getStats: () => client.get('/admin/stats'),
+  getDataSources: () => client.get('/admin/data-sources'),
+  listRules: () => client.get('/admin/rules'),
+  simulateRules: (data) => client.post('/admin/rules/simulate', data),
+};
+
+export const health = {
+  check: () => client.get('/health'),
+  ready: () => client.get('/health/ready'),
 };

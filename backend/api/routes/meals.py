@@ -74,6 +74,66 @@ def list_meals(
         page_size=page_size
     )
 
+@router.get("/raw-foods/search")
+def search_raw_foods(
+    search: Optional[str] = None,
+    category: Optional[str] = None,
+    limit: int = Query(50, ge=1, le=100),
+    db: Session = Depends(get_db)
+):
+    from models.food import Food, FoodNutrition, Nutrient
+    query = db.query(Food).filter(Food.is_active == True)
+    if category and category.lower() != "all":
+        query = query.filter(Food.category.ilike(f"%{category}%"))
+    if search:
+        s = f"%{search}%"
+        query = query.filter(or_(
+            Food.name.ilike(s),
+            Food.description.ilike(s),
+            Food.subcategory.ilike(s)
+        ))
+    foods = query.limit(limit).all()
+    
+    result = []
+    for f in foods:
+        nutr_entries = db.query(FoodNutrition, Nutrient).join(
+            Nutrient, FoodNutrition.nutrient_id == Nutrient.nutrient_id
+        ).filter(FoodNutrition.food_id == f.food_id).all()
+        
+        nutrients_list = [
+            {
+                "name": n.name,
+                "amount": float(fn.amount),
+                "unit": fn.unit,
+                "per_quantity": float(fn.per_quantity or 100),
+                "per_unit": fn.per_unit or "g"
+            }
+            for fn, n in nutr_entries
+        ]
+        
+        result.append({
+            "food_id": str(f.food_id),
+            "name": f.name,
+            "aliases": f.aliases or [],
+            "category": f.category,
+            "subcategory": f.subcategory,
+            "description": f.description,
+            "is_vegetarian": f.is_vegetarian,
+            "is_vegan": f.is_vegan,
+            "is_jain": f.is_jain,
+            "is_gluten_free": f.is_gluten_free,
+            "glycemic_index": f.glycemic_index,
+            "purine_level": f.purine_level,
+            "vitamin_k_mcg": float(f.vitamin_k_mcg) if f.vitamin_k_mcg is not None else None,
+            "nutrient_source": f.nutrient_source or "ICMR_NIN",
+            "nutrients": nutrients_list
+        })
+        
+    return {
+        "total": len(result),
+        "foods": result
+    }
+
 @router.get("/{meal_id}", response_model=MealDetail)
 def get_meal(
     meal_id: UUID,
