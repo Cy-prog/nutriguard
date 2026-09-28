@@ -1,8 +1,10 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from dataclasses import dataclass, field
-from api.schemas.engine_schemas import UserProfileSchema, FoodSchema
+from api.schemas.engine_schemas import UserProfileSchema, FoodSchema, MedicationSchema
 from engines.meal_engine import DailyMealPlan, Meal
+
+Medication = MedicationSchema
 
 class MedicationTimingAdvice(BaseModel):
     medication_name: str

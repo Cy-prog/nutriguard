@@ -28,7 +28,7 @@ This guide details step-by-step instructions for deploying the **NutriGuard** pl
    - **Name**: `nutriguard-api`
    - **Region**: Same region as the database
    - **Branch**: `main`
-   - **Root Directory**: `backend`
+   - **Root Directory**: `backend``
    - **Runtime**: `Python 3`
    - **Build Command**:
      ```bash

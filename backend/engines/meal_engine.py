@@ -1,14 +1,12 @@
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Set
-from api.schemas.engine_schemas import UserProfileSchema, FoodSchema, Classification
+from typing import List, Dict, Optional, Set, Any
+from api.schemas.engine_schemas import UserProfileSchema, FoodSchema, Classification, FiredRuleSchema
 from api.schemas.targets import NutrientTargetsSchema
 from engines.rule_engine import RuleEngine
 
 Food = FoodSchema
-
-from typing import List, Dict, Any
-from dataclasses import dataclass, field
+FiredRule = FiredRuleSchema
 
 @dataclass
 class BlockedFood:

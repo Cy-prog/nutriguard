@@ -174,7 +174,7 @@ def make_meals():
 # "REGIONAL MEAL EXAMPLES to include:"
 # I need to parse those and generate them, and pad to 105.
 import re
-user_text = \"\"\"
+user_text = """
 North Indian breakfasts: Aloo Paratha + Curd, Poha, Besan Chilla, Moong Dal Chilla, Stuffed Paratha, Chole Bhature (occasional), Upma
 North Indian lunches: Rajma Chawal, Chole + Roti, Dal Tadka + Rice, Paneer Bhurji + Roti, Aloo Gobi + Roti, Kadhi Chawal, Dal + Roti + Sabzi, Matar Paneer + Rice
 North Indian dinners: Dal Makhani + Roti, Palak Paneer + Roti, Mixed Veg + Roti, Baingan Bharta + Roti, Paneer Tikka + Roti, Shahi Paneer + Naan
@@ -192,9 +192,9 @@ Central Indian lunches: Dal Bati Churma, Bhutte Ka Kees, Sev Tamatar
 Central Indian dinners: Roti + Lehsun Chutney + Dal, Bafla + Dal
 Non-veg options: Egg Bhurji + Roti, Chicken Curry + Rice, Fish Curry + Rice, Egg Curry + Roti, Keema + Roti, Butter Chicken + Naan
 Simple everyday meals: Plain Dal + Rice, Roti + Sabzi + Dal, Khichdi, Dalia (Broken Wheat Porridge), Oats Upma, Sprouts Salad, Fruit + Curd Bowl
-\"\"\"
+"""
 
-lines = [l.strip() for l in user_text.strip().split('\\n')]
+lines = [l.strip() for l in user_text.strip().split('\n')]
 explicit_meals = []
 for line in lines:
     if not line: continue
