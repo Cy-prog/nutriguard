@@ -3,6 +3,8 @@ from typing import Optional, List
 import os
 
 class Settings(BaseSettings):
+    model_config = {"env_file": ".env", "case_sensitive": True}
+    
     ENVIRONMENT: str = "development"
     DATABASE_URL: str = "sqlite:///./nutriguard.db"
     
@@ -14,11 +16,39 @@ class Settings(BaseSettings):
     
     DEBUG: bool = False  # Added DEBUG flag for development/demo mode
     
-    CORS_ORIGINS: List[str] = ["*"]
+    # Raw string from env var — will be parsed into a list in @property
+    CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
     RATE_LIMIT_ENABLED: bool = True
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Parse CORS_ORIGINS into a proper list of origins.
+        Supports comma-separated string or JSON array format.
+        Never returns ['*'] when credentials are enabled — that's a CORS spec violation.
+        """
+        raw = self.CORS_ORIGINS.strip()
+        if not raw:
+            return ["http://localhost:5173"]
+        
+        # Handle JSON array format: ["https://a.com","https://b.com"]
+        if raw.startswith("["):
+            import json
+            try:
+                origins = json.loads(raw)
+                if isinstance(origins, list):
+                    return [o.strip() for o in origins if o.strip() and o.strip() != "*"]
+            except (json.JSONDecodeError, TypeError):
+                pass
+        
+        # Handle comma-separated format
+        origins = [o.strip() for o in raw.split(",") if o.strip()]
+        
+        # Filter out wildcard '*' in production — it's invalid with credentials
+        if self.ENVIRONMENT == "production":
+            origins = [o for o in origins if o != "*"]
+            if not origins:
+                origins = ["http://localhost:5173"]
+        
+        return origins
 
 settings = Settings()

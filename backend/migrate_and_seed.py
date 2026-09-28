@@ -1,11 +1,57 @@
-import sqlite3
+"""
+NutriGuard Production Migration & Seed Script
+===============================================
+Production workflow:
+  1. Run Alembic migrations (alembic upgrade head) for PostgreSQL
+  2. For SQLite, use create_all as Alembic is overkill for dev
+  3. Run idempotent seed data
+  4. Start FastAPI (handled by start.sh)
+"""
 import os
 import sys
+import subprocess
 
-def migrate_sqlite():
+def run_migrations():
+    """Run appropriate migration strategy based on database type."""
+    from core.database import SQLALCHEMY_DATABASE_URL, engine, init_db
+    
+    if "sqlite" in SQLALCHEMY_DATABASE_URL:
+        print("SQLite detected — using create_all for schema.")
+        init_db()
+        _migrate_sqlite_extras()
+    else:
+        print("PostgreSQL detected — running Alembic migrations...")
+        try:
+            result = subprocess.run(
+                ["alembic", "upgrade", "head"],
+                capture_output=True,
+                text=True,
+                cwd=os.path.dirname(__file__),
+                timeout=120
+            )
+            if result.returncode != 0:
+                print(f"Alembic migration output: {result.stdout}")
+                print(f"Alembic migration errors: {result.stderr}")
+                # Fall back to create_all if alembic fails (e.g. first deployment)
+                print("Alembic failed — falling back to create_all for initial schema...")
+                init_db()
+            else:
+                print(f"Alembic migration successful: {result.stdout.strip()}")
+        except FileNotFoundError:
+            print("Alembic not found — using create_all as fallback.")
+            init_db()
+        except subprocess.TimeoutExpired:
+            print("Alembic timed out — using create_all as fallback.")
+            init_db()
+
+
+def _migrate_sqlite_extras():
+    """Add columns/tables that may be missing in older SQLite databases."""
+    import sqlite3
+    
     db_path = os.path.join(os.path.dirname(__file__), 'nutriguard.db')
     if not os.path.exists(db_path):
-        print("nutriguard.db does not exist yet.")
+        print("nutriguard.db does not exist yet — will be created by create_all.")
         return
         
     con = sqlite3.connect(db_path)
@@ -26,53 +72,20 @@ def migrate_sqlite():
         if col_name not in existing_cols:
             print(f"Adding column {col_name} ({col_type}) to foods table...")
             cur.execute(f"ALTER TABLE foods ADD COLUMN {col_name} {col_type};")
-            
-    # Check if meal_plans table exists
-    cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='meal_plans'")
-    if not cur.fetchone():
-        print("Creating meal_plans table...")
-        cur.execute("""
-            CREATE TABLE meal_plans (
-                id CHAR(36) PRIMARY KEY,
-                user_id CHAR(36) NOT NULL,
-                plan_date DATE NOT NULL,
-                plan_type VARCHAR,
-                is_ai_generated BOOLEAN,
-                safety_validated BOOLEAN,
-                targets_snapshot JSON,
-                gap_report JSON,
-                created_at DATETIME,
-                FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-            )
-        """)
-        cur.execute("CREATE INDEX ix_meal_plans_user_id ON meal_plans(user_id)")
-
-    cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='meal_plan_meals'")
-    if not cur.fetchone():
-        print("Creating meal_plan_meals table...")
-        cur.execute("""
-            CREATE TABLE meal_plan_meals (
-                id CHAR(36) PRIMARY KEY,
-                plan_id CHAR(36) NOT NULL,
-                meal_type VARCHAR NOT NULL,
-                day_number INTEGER,
-                foods JSON NOT NULL,
-                total_nutrition JSON,
-                rationale JSON,
-                FOREIGN KEY (plan_id) REFERENCES meal_plans(id) ON DELETE CASCADE
-            )
-        """)
 
     con.commit()
     con.close()
     print("SQLite migration check complete.")
 
+
+def run_seed():
+    """Run idempotent seed operations."""
+    from data.seed import run_seed as seed_all
+    seed_all()
+
+
 if __name__ == "__main__":
-    from core.database import SQLALCHEMY_DATABASE_URL, engine, init_db
-    if "sqlite" in SQLALCHEMY_DATABASE_URL:
-        migrate_sqlite()
-    else:
-        print("Ensuring relational database schema exists...")
-        init_db()
-    from data.seed import run_seed
+    print("=== NutriGuard Migration & Seed ===")
+    run_migrations()
     run_seed()
+    print("=== Migration & Seed Complete ===")

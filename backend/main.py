@@ -1,45 +1,58 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from api.routes import recommendations, nlp, chat, auth, admin
 from api.routes import profile, meal_plan, meals, grocery, admin_meals, foods
 from core.config import settings
+from core.logging import logger
 from sqlalchemy import text
+import uuid
 
 app = FastAPI(
     title="NutriGuard AI API",
     description="AI-Powered Personalized Diet & Medication Nutrition System with Indian Meal Planning",
-    version="2.0.0"
+    version="2.0.0",
+    # Disable docs in production for security
+    docs_url="/docs" if settings.ENVIRONMENT != "production" else None,
+    redoc_url="/redoc" if settings.ENVIRONMENT != "production" else None,
 )
 
-# CORS
-if settings.CORS_ORIGINS:
+# CORS — use the properly parsed origins list
+origins = settings.cors_origins_list
+if origins:
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.CORS_ORIGINS,
+        allow_origins=origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
 
-from fastapi import Request
-from fastapi.responses import JSONResponse
-import uuid
-
-from core.logging import logger
-
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     req_id = str(uuid.uuid4())
-    logger.error(f"Unhandled exception: {str(exc)}", extra={"request_id": req_id, "endpoint": request.url.path}, exc_info=True)
+    logger.error(
+        f"Unhandled exception: {type(exc).__name__}",
+        extra={"request_id": req_id, "endpoint": request.url.path},
+        exc_info=True
+    )
+    # Never leak internal details to clients
     return JSONResponse(
         status_code=500,
         content={
             "error": {
                 "code": "INTERNAL_SERVER_ERROR",
-                "message": "An unexpected error occurred."
+                "message": "An unexpected error occurred. Please try again later."
             },
             "request_id": req_id
         }
+    )
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
     )
 
 # Existing routers
@@ -144,14 +157,18 @@ app.include_router(
 @app.get("/health")
 @app.get("/api/v1/health")
 def health_check():
+    """Basic application health check for Render/monitoring."""
+    from core.database import SessionLocal
     db_status = "UP"
+    db = None
     try:
-        from core.database import SessionLocal
         db = SessionLocal()
         db.execute(text("SELECT 1"))
-        db.close()
     except Exception:
         db_status = "DOWN"
+    finally:
+        if db:
+            db.close()
         
     ai_status = "CONFIGURED" if settings.GEMINI_API_KEY else "KEYWORD_FALLBACK"
     return {
@@ -164,16 +181,18 @@ def health_check():
 @app.get("/health/ready")
 @app.get("/api/v1/health/ready")
 def readiness_check():
-    # Attempt DB connection
+    """Readiness probe — verifies database connectivity."""
+    from core.database import SessionLocal
+    db = None
     try:
-        from core.database import SessionLocal
         db = SessionLocal()
         db.execute(text("SELECT 1"))
-        db.close()
         return {"status": "ready", "database": "healthy"}
-    except Exception as e:
-        from fastapi import HTTPException
+    except Exception:
         raise HTTPException(status_code=503, detail="Database unavailable")
+    finally:
+        if db:
+            db.close()
 
 @app.get("/")
 def read_root():
@@ -181,5 +200,5 @@ def read_root():
         "name": "NutriGuard AI API",
         "version": "2.0.0",
         "description": "Production-Grade AI Nutrition & Indian Meal Recommendation Platform",
-        "docs_url": "/docs"
+        "docs_url": "/docs" if settings.ENVIRONMENT != "production" else None
     }

@@ -1,12 +1,16 @@
 {
   "rewrites": [
     {
-      "source": "/api/v1/:path*",
-      "destination": "https://nutriguard-api.onrender.com/api/v1/:path*"
+      "source": "/api/:path*",
+      "destination": "https://nutriguard-api.onrender.com/api/:path*"
     },
     {
       "source": "/health",
       "destination": "https://nutriguard-api.onrender.com/health"
+    },
+    {
+      "source": "/health/ready",
+      "destination": "https://nutriguard-api.onrender.com/health/ready"
     },
     {
       "source": "/(.*)",

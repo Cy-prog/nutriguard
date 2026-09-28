@@ -34,8 +34,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (userData) => {
-    await auth.register(userData);
-    await login(userData.email, userData.password);
+    const res = await auth.register(userData);
+    localStorage.setItem('token', res.data.access_token);
+    const profileRes = await profile.getProfile();
+    setUser(profileRes.data);
   };
 
   const logout = () => {

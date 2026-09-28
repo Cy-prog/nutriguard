@@ -53,7 +53,7 @@ In the Render Web Service settings, navigate to **Environment** and add:
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `10080` | 7-day token expiration |
 | `GEMINI_API_KEY` | `<Your Google Gemini API Key>` | Optional: Enables Gemini Flash AI features |
 | `ENVIRONMENT` | `production` | Sets production mode |
-| `CORS_ORIGINS` | `["https://nutriguard.vercel.app"]` | Comma-separated list of allowed frontend domains |
+| `CORS_ORIGINS` | `https://nutriguard.vercel.app,http://localhost:5173` | Allowed frontend domains (comma-separated string or JSON array) |
 
 ---
 

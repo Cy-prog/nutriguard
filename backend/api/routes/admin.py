@@ -103,7 +103,7 @@ def get_admin_stats(db: Session = Depends(get_db), current_user: User = Depends(
 
 
 @router.get("/data-sources")
-def get_data_sources(db: Session = Depends(get_db)):
+def get_data_sources(db: Session = Depends(get_db), current_user: User = Depends(get_current_clinical_reviewer)):
     sources = [
         {
             "id": "ifct-2017",

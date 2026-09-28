@@ -392,10 +392,9 @@ def seed_drug_nutrient_depletions(db):
         ).first()
         if not nutr:
             # Create dummy nutrient just for testing
-            nutr = Nutrient(name=nutrient_name, unit="mg", )
+            nutr = Nutrient(name=nutrient_name, unit="mg")
             db.add(nutr)
-            db.commit()
-            db.refresh(nutr)
+            db.flush()
         
         # Idempotent check
         existing = db.query(DrugNutrientDepletion).filter(
@@ -414,7 +413,7 @@ def seed_drug_nutrient_depletions(db):
             db.add(depletion)
             print(f'  Seeded: {generic_name} depletes {nutrient_name}')
     
-    db.commit()
+    db.flush()
     print('DrugNutrientDepletion seeding complete.')
 
 def seed_drug_food_interactions(db: Session):

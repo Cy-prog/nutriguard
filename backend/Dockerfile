@@ -13,9 +13,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 8000
+# Use PORT env var (Render sets this dynamically)
+EXPOSE ${PORT:-8000}
 
-COPY startup.sh .
-RUN chmod +x startup.sh
+RUN chmod +x start.sh
 
-CMD ["./startup.sh"]
+CMD ["./start.sh"]

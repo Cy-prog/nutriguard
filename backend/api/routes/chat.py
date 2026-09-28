@@ -169,6 +169,6 @@ async def chat_food(request: ChatRequest, db_session: Session = Depends(get_db),
             
         return {"clarification_required": True, "question": "I'm not sure how to handle that request."}
     except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return {"clarification_required": True, "question": f"An unexpected error occurred: {e}"}
+        from core.logging import logger
+        logger.error(f"Chat endpoint error: {type(e).__name__}: {e}", extra={"endpoint": "/chat/food"}, exc_info=True)
+        return {"clarification_required": True, "question": "Unable to process your request right now. Please try again."}

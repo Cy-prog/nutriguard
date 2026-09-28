@@ -17,7 +17,7 @@ class MealPlan(Base):
     safety_validated = Column(Boolean, default=False)
     targets_snapshot = Column(JSON)    # NutrientTargets at generation time
     gap_report = Column(JSON)          # NutrientGapReport
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=func.now())
 
     meals = relationship("MealPlanMeal", back_populates="plan", cascade="all, delete-orphan")
     user = relationship("User", back_populates="meal_plans")
