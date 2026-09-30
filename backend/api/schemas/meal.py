@@ -27,6 +27,11 @@ class ProfileUpdate(BaseModel):
     budget_level: Optional[str] = None
     lifestyle_notes: Optional[str] = None
     onboarding_completed: Optional[bool] = None
+    # UI compatibility fields
+    goal: Optional[str] = None
+    region_preference: Optional[str] = None
+    disliked_ingredients: Optional[List[str]] = None
+    health_conditions: Optional[str] = None
     # Health data
     allergies: Optional[List[str]] = None
     conditions: Optional[List[Dict[str, Any]]] = None
@@ -60,6 +65,14 @@ class ProfileResponse(BaseModel):
     lifestyle_notes: Optional[str] = None
     onboarding_completed: bool = False
     created_at: datetime
+    # Health data
+    allergies: List[str] = []
+    conditions: List[Dict[str, Any]] = []
+    medications: List[Dict[str, Any]] = []
+    health_conditions: Optional[str] = None
+    disliked_ingredients: List[str] = []
+    goal: Optional[str] = None
+    region_preference: Optional[str] = None
 
 
 class NutritionTargetsResponse(BaseModel):

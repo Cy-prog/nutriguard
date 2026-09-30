@@ -21,6 +21,28 @@ def normalize_name(name: str) -> str:
     return name.lower().strip().replace(' ', '_').replace('-', '_')
 
 def seed_users(db):
+    from core.config import settings
+    
+    # In production, NEVER seed known default test accounts with default passwords
+    if settings.ENVIRONMENT == "production":
+        admin_email = os.getenv("ADMIN_EMAIL")
+        admin_pass = os.getenv("ADMIN_INITIAL_PASSWORD")
+        if admin_email and admin_pass:
+            existing = db.query(User).filter_by(email=admin_email).first()
+            if not existing:
+                admin_user = User(
+                    email=admin_email,
+                    hashed_password=get_password_hash(admin_pass),
+                    role="ADMIN",
+                    display_name="Production Admin"
+                )
+                db.add(admin_user)
+                db.flush()
+                print(f"Initial production admin seeded: {admin_email}")
+        else:
+            print("Production environment detected: Skipping default dev users seed.")
+        return
+
     users = [
         {"email": "admin@nutriguard.com", "role": "ADMIN", "display_name": "System Admin"},
         {"email": "reviewer@nutriguard.com", "role": "CLINICAL_REVIEWER", "display_name": "Clinical Reviewer"},

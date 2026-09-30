@@ -345,5 +345,12 @@ def replace_meal_body(
 ):
     meal_type = payload.get("mealType") or payload.get("meal_type") or "LUNCH"
     current_meal_id = payload.get("mealId") or payload.get("current_meal_id")
-    req = ReplaceMealRequest(current_meal_id=UUID(current_meal_id) if current_meal_id else None, count=5)
+    meal_uuid = None
+    if current_meal_id:
+        try:
+            meal_uuid = UUID(str(current_meal_id))
+        except (ValueError, TypeError):
+            raise HTTPException(status_code=400, detail="Invalid mealId UUID format")
+            
+    req = ReplaceMealRequest(current_meal_id=meal_uuid, count=5)
     return replace_meal_options(meal_type=meal_type, req=req, db=db, current_user=current_user)

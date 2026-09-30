@@ -120,17 +120,20 @@ export default function AIAssistant() {
     ]);
   };
 
-  // Helper to format response text with simple formatting
+  // Helper to format response text with safe React formatting (no dangerouslySetInnerHTML)
   const formatText = (text) => {
+    if (!text) return null;
     return text.split('\n').map((line, idx) => {
-      // Check for bold styling **text**
-      const formattedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      const parts = line.split(/(\*\*.*?\*\*)/g);
       return (
-        <span 
-          key={idx} 
-          className="block min-h-[1.2em]" 
-          dangerouslySetInnerHTML={{ __html: formattedLine }} 
-        />
+        <span key={idx} className="block min-h-[1.2em]">
+          {parts.map((part, pIdx) => {
+            if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
+              return <strong key={pIdx}>{part.slice(2, -2)}</strong>;
+            }
+            return part;
+          })}
+        </span>
       );
     });
   };

@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from pydantic import model_validator
 from typing import Optional, List
 import os
 
@@ -19,6 +20,19 @@ class Settings(BaseSettings):
     # Raw string from env var — will be parsed into a list in @property
     CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
     RATE_LIMIT_ENABLED: bool = True
+
+    @model_validator(mode="after")
+    def validate_production_security(self) -> "Settings":
+        if self.ENVIRONMENT == "production":
+            if (
+                not self.JWT_SECRET 
+                or self.JWT_SECRET == "dev-secret-do-not-use-in-prod" 
+                or len(self.JWT_SECRET) < 32
+            ):
+                raise ValueError(
+                    "CRITICAL SECURITY: In production, JWT_SECRET must be configured with a random string of at least 32 characters."
+                )
+        return self
     
     @property
     def cors_origins_list(self) -> List[str]:
@@ -41,13 +55,9 @@ class Settings(BaseSettings):
                 pass
         
         # Handle comma-separated format
-        origins = [o.strip() for o in raw.split(",") if o.strip()]
-        
-        # Filter out wildcard '*' in production — it's invalid with credentials
-        if self.ENVIRONMENT == "production":
-            origins = [o for o in origins if o != "*"]
-            if not origins:
-                origins = ["http://localhost:5173"]
+        origins = [o.strip() for o in raw.split(",") if o.strip() and o.strip() != "*"]
+        if not origins:
+            origins = ["http://localhost:5173"]
         
         return origins
 

@@ -26,7 +26,12 @@ def get_current_user(
     except (JWTError, ValidationError):
         raise HTTPException(status_code=401, detail="Invalid authentication credentials")
         
-    user = db.query(User).filter(User.user_id == UUID(user_id)).first()
+    try:
+        user_uuid = UUID(str(user_id))
+    except (ValueError, TypeError):
+        raise HTTPException(status_code=401, detail="Invalid token subject identifier")
+        
+    user = db.query(User).filter(User.user_id == user_uuid).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
         

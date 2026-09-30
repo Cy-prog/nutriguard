@@ -12,44 +12,32 @@ from models.user import User
 
 router = APIRouter()
 
+from core.database import get_db
+from services.recommendation_service import RecommendationService
+
 @router.post("/evaluate/{food_id}")
-async def evaluate_food(food_id: UUID, user_context: Dict[str, Any], current_user: User = Depends(get_current_user)):
+async def evaluate_food(
+    food_id: UUID, 
+    user_context: Dict[str, Any], 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     """
-    Evaluates a specific food against the user's context.
+    Evaluates a specific food against the user's clinical context.
     """
-    # Initialize engines (in production these might be injected or initialized with a DB session)
-    safety_engine = SafetyEngine(db_session=None)
-    rule_engine = RuleEngine(db_session=None)
+    service = RecommendationService(db)
+    det_results = await service.generate_recommendations(user_context, [food_id])
     
-    # STEP 1: Safety pre-check (hard blocks applied immediately)
-    safety_pre = safety_engine.evaluate(user_context.dict(), food_id)
-    if not safety_pre.is_safe_to_evaluate:
-        return {
-            "food_id": food_id,
-            "classification": "blocked_allergy" if safety_pre.veto_priority == 1 else "blocked_interaction",
-            "reason": safety_pre.veto_reason,
-            "requires_professional_review": safety_pre.requires_professional_review,
-            "fired_rules": safety_pre.rule_ids_fired
-        }
+    if not det_results or not det_results.get("foods"):
+        raise HTTPException(status_code=404, detail="Food item not found or evaluation failed")
         
-    # STEP 2: Rule engine
-    rule_result = rule_engine.evaluate_food(user_context.dict(), food_id)
-    
-    # Steps 3 & 4 (Interaction & Scoring) would go here
-    # ...
-    
-    # Step 5: Classify
-    classification = rule_result.classification
-    
-    # Step 6 & 7 & 8 (Explainability & LLM & Safety post-validation)
-    # Mocking explainability for MVP
-    explanation = f"Evaluated safely. Based on your profile rules: {[r['rationale'] for r in rule_result.fired_rules]}"
-    
+    res = det_results["foods"][0]
     return {
-        "food_id": food_id,
-        "classification": classification,
-        "explanation": explanation,
-        "fired_rules": rule_result.fired_rules
+        "food_id": str(food_id),
+        "classification": res.get("classification"),
+        "explanation": res.get("explanation") or res.get("reason"),
+        "fired_rules": res.get("fired_rules", []),
+        "interactions": res.get("interactions", [])
     }
 
 from core.database import get_db
